@@ -18,24 +18,24 @@ bbox = coordinates.bbox()
 | Initialization    | Time      |
 |-------------------|-----------|
 | python            | 4.26      |
-| numpy             | 0.0567    |
-| CoordString       | 0.0297    |
+| numpy             | 3.61      |
+| CoordString       | 0.842     |
 
 | Indexing          | Time      |
 |-------------------|-----------|
-| python            | 0.424     |
-| numpy             | 1.75      |
-| CoordString       | 0.784     |
+| python            | 0.421     |
+| numpy             | 1.72      |
+| CoordString       | 1.04      |
 
 | Slicing           | Time      |
 |-------------------|-----------|
-| python            | 0.969     |
-| numpy             | 0.221     |
-| CoordString       | 1.26      |
+| python            | 0.938     |
+| numpy             | 0.239     |
+| CoordString       | 0.782     |
 
 | Bounding box      | Time      |
 |-------------------|-----------|
-| python            | 3.02      |
-| numpy             | 0.0495    |
-| CoordString       | 0.0280    |
+| python            | 2.94      |
+| numpy             | 0.0508    |
+| CoordString       | 0.0275    |
 

@@ -173,16 +173,25 @@ cdef class CoordString:
             raise ValueError("step cannot equal zero")
 
         coords = <double *> malloc(outlength * self.rank * sizeof(double))
-        cdef int actual_stop = start + outlength*step
-        cdef int j = 0, pos = start, newpos = 0
+        cdef int final_offset = start*self.rank + outlength*step*self.rank
+        cdef int j = 0, offset = start*self.rank, newoffset = 0
 
-        while pos != actual_stop:
-            j = 0
-            while j != self.rank:
-                coords[newpos*self.rank+j] = self.coords[pos*self.rank+j]
-                j += 1
-            pos += step
-            newpos += 1
+        if self.rank == 2:
+            while offset != final_offset:
+                j = 0
+                coords[newoffset] = self.coords[offset]
+                coords[newoffset+1] = self.coords[offset+1]
+                offset += step*self.rank
+                newoffset += self.rank
+
+        elif self.rank == 3:
+            while offset != final_offset:
+                j = 0
+                coords[newoffset] = self.coords[offset]
+                coords[newoffset+1] = self.coords[offset+1]
+                coords[newoffset+2] = self.coords[offset+2]
+                offset += step*self.rank
+                newoffset += self.rank
 
         return CoordString.new(coords, outlength, self.rank, 0)
 

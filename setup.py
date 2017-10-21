@@ -6,7 +6,7 @@ extensions = [Extension("coordstring.coordstring", ["coordstring/coordstring.pyx
 
 setup(
     name = "coordstring",
-    version = "0.1.2",
+    version = "0.1.3",
     setup_requires = ["numpy>=1.10"],
     install_requires = ["numpy>=1.10"],
     author = "Nat Wilson",
