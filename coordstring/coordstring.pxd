@@ -6,6 +6,6 @@ cdef class CoordString:
     @staticmethod
     cdef CoordString new(double *coords, int length, int rank, int ring)
     cpdef CoordString slice(self, int start, int stop=?, int step=?)
-    cdef double getX(self, int index)
-    cdef double getY(self, int index)
-    cdef double getZ(self, int index)
+    cdef double getX(self, int index) nogil
+    cdef double getY(self, int index) nogil
+    cdef double getZ(self, int index) nogil

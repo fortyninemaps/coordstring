@@ -82,19 +82,17 @@ cdef class CoordString:
             i += 1
 
     def __getitem__(self, int index):
-        if index > self.length:
+        if index >= self.length:
             raise IndexError("index out of range")
-        if self.rank == -1:
-            raise IndexError("CoordString empty")
 
         cdef double x, y, z
-        cdef int pos = (index*self.rank) % (self.length*self.rank)
-        x = self.coords[pos]
-        y = self.coords[pos+1]
+        cdef int offset = (index*self.rank) % (self.length*self.rank)
+        x = self.coords[offset]
+        y = self.coords[offset+1]
         if self.rank == 2:
             return x, y
         else:
-            z = self.coords[pos+2]
+            z = self.coords[offset+2]
             return x, y, z
 
     def __setitem__(self, int key, double[:] value):
@@ -139,17 +137,17 @@ cdef class CoordString:
         c.ring = ring
         return c
 
-    cdef double getX(self, int index):
+    cdef double getX(self, int index) nogil:
         if (index == self.length) and (self.ring == 1):
             index = 0
         return self.coords[index*self.rank]
 
-    cdef double getY(self, int index):
+    cdef double getY(self, int index) nogil:
         if (index == self.length) and (self.ring == 1):
             index = 0
         return self.coords[index*self.rank+1]
 
-    cdef double getZ(self, int index):
+    cdef double getZ(self, int index) nogil:
         if self.rank != 3:
             return NAN
         if (index == self.length) and (self.ring == 1):

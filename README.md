@@ -5,6 +5,7 @@ A fast container for geospatial coordinates.
 ## Usage
 
 ```python
+from coordstring import CoordString
 
 coordinates = CoordString([(0, 10), (2, 8), (3, 5), (2, 4)])
 
@@ -25,17 +26,17 @@ bbox = coordinates.bbox()
 |-------------------|-----------|
 | python            | 0.421     |
 | numpy             | 1.72      |
-| CoordString       | 1.04      |
+| CoordString       | 0.727     |
 
 | Slicing           | Time      |
 |-------------------|-----------|
-| python            | 0.938     |
-| numpy             | 0.239     |
-| CoordString       | 0.782     |
+| python            | 0.920     |
+| numpy             | 0.217     |
+| CoordString       | 0.708     |
 
 | Bounding box      | Time      |
 |-------------------|-----------|
-| python            | 2.94      |
-| numpy             | 0.0508    |
-| CoordString       | 0.0275    |
+| python            | 14.8      |
+| numpy             | 0.243     |
+| CoordString       | 0.137     |
 

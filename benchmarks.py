@@ -37,9 +37,9 @@ print("Bounding box")
 
 print(timeit.timeit("(min(x for x,_ in py_data), min(y for _,y in py_data),"
                     " max(x for x,_ in py_data), max(y for _,y in py_data))",
-                    number=100, globals=globals()))
+                    number=500, globals=globals()))
 print(timeit.timeit("(np_data[:,0].min(), np_data[:,1].min(),"
                     " np_data[:,0].max(), np_data[:,1].max())",
-                    number=100, globals=globals()))
-print(timeit.timeit("cs_data.bbox()", number=100, globals=globals()))
+                    number=500, globals=globals()))
+print(timeit.timeit("cs_data.bbox()", number=500, globals=globals()))
 
