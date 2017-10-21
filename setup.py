@@ -2,11 +2,11 @@ import sys
 from numpy import get_include
 from setuptools import setup, Extension
 
-extensions = [Extension("coordstring", ["coordstring/coordstring.pyx"])]
+extensions = [Extension("coordstring.coordstring", ["coordstring/coordstring.pyx"])]
 
 setup(
     name = "coordstring",
-    version = "0.1.1",
+    version = "0.1.2",
     setup_requires = ["numpy>=1.10"],
     install_requires = ["numpy>=1.10"],
     author = "Nat Wilson",
