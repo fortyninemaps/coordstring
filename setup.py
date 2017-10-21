@@ -2,7 +2,7 @@ import sys
 from numpy import get_include
 from setuptools import setup, Extension
 
-extensions = [Extension("coordstring.coordstring", ["coordstring/coordstring.pyx"])]
+extensions = [Extension("coordstring", ["coordstring/coordstring.pyx"])]
 
 setup(
     name = "coordstring",
@@ -12,8 +12,11 @@ setup(
     author = "Nat Wilson",
     author_email = "natw@fortyninemaps.com",
     packages = ["coordstring"],
-    url = "http://www.fortyninemaps.com/karta.html",
-    description = "Fast coordinate arrays for geospatial data",
+    ext_modules = extensions,
+    include_dirs = [get_include()],
+    package_data = {"coordstring": ["*.pxd"]},
+    url = "https://github.com/fortyninemaps/coordstring",
+    description = "Fast collection for geospatial coordinates",
     classifiers = ["Programming Language :: Python :: 2",
                    "Programming Language :: Python :: 2.7",
                    "Programming Language :: Python :: 3",
@@ -23,7 +26,5 @@ setup(
                    "Topic :: Scientific/Engineering",
                    "Topic :: Scientific/Engineering :: GIS",
                    "License :: OSI Approved :: MIT License"],
-    license = "MIT License",
-    ext_modules = extensions,
-    include_dirs = [get_include()]
+    license = "MIT License"
 )

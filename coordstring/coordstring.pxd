@@ -1,5 +1,3 @@
-cimport numpy as np
-
 cdef class CoordString:
     cdef int length
     cdef double *coords
