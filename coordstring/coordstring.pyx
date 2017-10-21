@@ -35,8 +35,6 @@ cdef class CoordString:
     ring : int
         indicates whether coordinates are open (0) or closed (1)
     """
-    cdef double* coords
-    cdef readonly int rank, length, ring
 
     def __cinit__(self, object coords=None, int ring=0):
 
@@ -133,7 +131,7 @@ cdef class CoordString:
         return True
 
     @staticmethod
-    cdef new(double *coords, int length, int rank, int ring):
+    cdef CoordString new(double *coords, int length, int rank, int ring):
         c = CoordString([])
         c.coords = coords
         c.length = length
