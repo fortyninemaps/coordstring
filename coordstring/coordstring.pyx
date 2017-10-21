@@ -5,10 +5,10 @@ cimport numpy as np
 from cpython cimport bool
 
 cdef double mind(double a, double b) nogil:
-    return a if a<= b else b
+    return a if a <= b else b
 
 cdef double maxd(double a, double b) nogil:
-    return a if a>= b else b
+    return a if a >= b else b
 
 cdef int floord(double a) nogil:
     if (a % 1) == 0:
@@ -24,23 +24,30 @@ cdef int ceild(double a) nogil:
 
 cdef class CoordString:
     """ A CoordString is a datastructure for coordinate data. Initialize a
-    CoordString with 2 or 3 iterable objects, corresponding to x, y, and
-    optionally z coordinates.
+    CoordString with a collection of positions, e.g.
+
+        cs = CoordString([(0, 1), (4, 2), (3, 3)])
 
     Parameters
     ----------
     coords : iterable
         list of coordinates, with items of length 2 or 3
-    ring : bool
-        indicates whether coordinate are implicitly closed
+    ring : int
+        indicates whether coordinates are open (0) or closed (1)
     """
     cdef double* coords
     cdef readonly int rank, length, ring
-    def __cinit__(self, object coords, int ring=0):
-        cdef int length = -1
+
+    def __cinit__(self, object coords=None, int ring=0):
+
+        if ring not in (0, 1):
+            raise ValueError("CoordString ring must be 0 or 1")
+        self.ring = ring
+
+        self.length = -1
         try:
-            length = len(coords)
-            if length == 0:
+            self.length = len(coords)
+            if self.length == 0:
                 self.rank = -1
             else:
                 self.rank = len(coords[0])
@@ -50,13 +57,7 @@ cdef class CoordString:
         if self.rank not in (-1, 2, 3):
             raise ValueError("CoordString rank must be 2 or 3")
 
-        if ring not in (0, 1):
-            raise ValueError("CoordString ring must be 0 or 1")
-
-        self.ring = ring
-        self.length = length
-        self.coords = <double *> malloc(length * self.rank * sizeof(double))
-
+        self.coords = <double *> malloc(self.length * self.rank * sizeof(double))
         cdef int i = 0, j
         cdef object xy
         for xy in coords:
@@ -131,6 +132,15 @@ cdef class CoordString:
                 return False
         return True
 
+    @staticmethod
+    cdef new(double *coords, int length, int rank, int ring):
+        c = CoordString([])
+        c.coords = coords
+        c.length = length
+        c.rank = rank
+        c.ring = ring
+        return c
+
     cdef double getX(self, int index):
         if (index == self.length) and (self.ring == 1):
             index = 0
@@ -148,8 +158,8 @@ cdef class CoordString:
             index = 0
         return self.coords[index*self.rank+2]
 
-    cpdef np.ndarray slice(self, int start, int stop=0, int step=1):
-        """ Slice coordinate string, returning an <n x rank> numpy array. """
+    cpdef CoordString slice(self, int start, int stop=0, int step=1):
+        """ Slice coordinate string, returning a new CoordString. """
         if self.rank == -1:
             return ValueError("CoordString empty")
 
@@ -160,21 +170,26 @@ cdef class CoordString:
 
         cdef int outlength
         if step != 0:
-            outlength = ceild(<double> (abs(stop) - abs(start)) / abs(step))
+            outlength = ceild(<double> abs(stop - start) / abs(step))
         else:
             raise ValueError("step cannot equal zero")
 
-        cdef np.ndarray[np.double_t, ndim=1] result = np.empty(outlength*self.rank, dtype=np.double)
-        cdef int i = 0, j = 0, pos = start
-        cdef int rank = self.rank
-        while pos < stop:
-            for j in range(self.rank):
-                result[i] = self.coords[pos*rank+j]
-                i += 1
+        coords = <double *> malloc(outlength * self.rank * sizeof(double))
+        cdef int actual_stop = start + outlength*step
+        cdef int j = 0, pos = start, newpos = 0
+
+        while pos != actual_stop:
+            j = 0
+            while j != self.rank:
+                coords[newpos*self.rank+j] = self.coords[pos*self.rank+j]
+                j += 1
             pos += step
-        return result.reshape([outlength, self.rank])
+            newpos += 1
+
+        return CoordString.new(coords, outlength, self.rank, 0)
 
     def bbox(self):
+        """ Return the bounding tuple of the coordinate string. """
         cdef double xmin, ymin, xmax, ymax
         cdef int i = 0
         cdef int offset = 0
@@ -196,6 +211,7 @@ cdef class CoordString:
         return (xmin, ymin, xmax, ymax)
 
     def vectors(self, bool drop_z=False):
+        """ Return the coordinate string as a tuple of <n x 1> numpy arrays. """
         cdef int i = 0, pos = 0
         cdef np.ndarray[np.double_t, ndim=1] x, y
         x = np.empty(self.length, dtype=np.double)
@@ -219,6 +235,7 @@ cdef class CoordString:
         return x, y, z
 
     def asarray(self):
+        """ Return the coordinate string as an <n x rank> numpy array. """
         if self.rank == -1:
             return np.array([[]], dtype=np.double)
         cdef np.ndarray[np.double_t, ndim=1] arr = np.empty(self.rank*self.length, dtype=np.double)
