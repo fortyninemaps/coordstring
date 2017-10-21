@@ -174,11 +174,10 @@ cdef class CoordString:
 
         coords = <double *> malloc(outlength * self.rank * sizeof(double))
         cdef int final_offset = start*self.rank + outlength*step*self.rank
-        cdef int j = 0, offset = start*self.rank, newoffset = 0
+        cdef int offset = start*self.rank, newoffset = 0
 
         if self.rank == 2:
             while offset != final_offset:
-                j = 0
                 coords[newoffset] = self.coords[offset]
                 coords[newoffset+1] = self.coords[offset+1]
                 offset += step*self.rank
@@ -186,7 +185,6 @@ cdef class CoordString:
 
         elif self.rank == 3:
             while offset != final_offset:
-                j = 0
                 coords[newoffset] = self.coords[offset]
                 coords[newoffset+1] = self.coords[offset+1]
                 coords[newoffset+2] = self.coords[offset+2]
