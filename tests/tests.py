@@ -63,14 +63,14 @@ class CoordStringTests(unittest.TestCase):
         x = np.linspace(0, 5)
         y = x**2
         cs = CoordString(np.c_[x, y])
-        self.assertTrue(np.all(cs.slice(10, 25) == np.c_[x, y][10:25]))
+        self.assertTrue(np.all(cs.slice(10, 25).asarray() == np.c_[x, y][10:25]))
         return
 
     def test_slicing_stepped(self):
         x = np.linspace(0, 5)
         y = x**2
         cs = CoordString(np.c_[x, y])
-        self.assertTrue(np.all(cs.slice(10, 35, 3) == np.c_[x, y][10:35:3]))
+        self.assertTrue(np.all(cs.slice(10, 35, 3).asarray() == np.c_[x, y][10:35:3]))
         return
 
     def test_asarray(self):
